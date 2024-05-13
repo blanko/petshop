@@ -1,28 +1,22 @@
 ﻿using System.Text;
+using System.Text.Json; // Usado: JSONSerializer
 
 // URL del API
 string url = "https://petstore.swagger.io/v2/pet";
 
 // Objeto JSON para enviar en el cuerpo del POST
-string jsonContent = @"
+string jsonContent = JsonSerializer.Serialize(new
 {
-    ""id"": 0,
-    ""category"": {
-        ""id"": 0,
-        ""name"": ""string""
+    id = 1,
+    title = "prueba",
+    category = new
+    {
+        id = 0,
+        name = "string"
     },
-    ""name"": ""Blanco Mascota"",
-    ""photoUrls"": [
-        ""string""
-    ],
-    ""tags"": [
-        {
-            ""id"": 0,
-            ""name"": ""string""
-        }
-    ],
-    ""status"": ""available""
-}";
+    name = "Blanco Mascota",
+    status = "available"
+});
 
 // Crear el cliente HTTP
 using (HttpClient client = new HttpClient())
@@ -37,11 +31,19 @@ using (HttpClient client = new HttpClient())
     try
     {
         // Enviar la solicitud POST
-        HttpResponseMessage response = await client.PostAsync(url, content);
+        using HttpResponseMessage response = await client.PostAsync(url, content);
 
         // Leer y mostrar la respuesta
         string result = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(result);
+
+        if (response.IsSuccessStatusCode) // Devuelve algo si el codigo es correcto
+        {
+            Console.WriteLine($"{response.StatusCode} - Creado: {result}"/*, Formatting.Indented*/);
+        }
+        else
+        {
+            Console.WriteLine($"{response.StatusCode} - Fallido: {result}"/*, Formatting.Indented*/);
+        }
     }
     catch (Exception ex)
     {
