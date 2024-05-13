@@ -1,6 +1,6 @@
-﻿// URL del API
-using System.Text;
+﻿using System.Text;
 
+// URL del API
 string url = "https://petstore.swagger.io/v2/pet";
 
 // Objeto JSON para enviar en el cuerpo del POST
